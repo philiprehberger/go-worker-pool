@@ -1,5 +1,9 @@
 # go-worker-pool
 
+[![CI](https://github.com/philiprehberger/go-worker-pool/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/go-worker-pool/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/philiprehberger/go-worker-pool.svg)](https://pkg.go.dev/github.com/philiprehberger/go-worker-pool)
+[![License](https://img.shields.io/github/license/philiprehberger/go-worker-pool)](LICENSE)
+
 Bounded goroutine pool with backpressure and futures for Go.
 
 ## Installation
@@ -65,6 +69,13 @@ if err != nil {
 | `Go[T](p, fn) *Future[T]` | Submit work that returns a value; returns a Future |
 | `(*Future[T]) Get() (T, error)` | Block until result is ready |
 | `(*Future[T]) Done() bool` | Non-blocking check if complete |
+
+## Development
+
+```bash
+go test ./...
+go vet ./...
+```
 
 ## License
 
