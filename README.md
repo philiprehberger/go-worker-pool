@@ -1,8 +1,6 @@
 # go-worker-pool
 
-[![CI](https://github.com/philiprehberger/go-worker-pool/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/go-worker-pool/actions/workflows/ci.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/philiprehberger/go-worker-pool.svg)](https://pkg.go.dev/github.com/philiprehberger/go-worker-pool)
-[![License](https://img.shields.io/github/license/philiprehberger/go-worker-pool)](LICENSE)
+[![CI](https://github.com/philiprehberger/go-worker-pool/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/go-worker-pool/actions/workflows/ci.yml) [![Go Reference](https://pkg.go.dev/badge/github.com/philiprehberger/go-worker-pool.svg)](https://pkg.go.dev/github.com/philiprehberger/go-worker-pool) [![License](https://img.shields.io/github/license/philiprehberger/go-worker-pool)](LICENSE)
 
 Bounded goroutine pool with backpressure and futures for Go
 
