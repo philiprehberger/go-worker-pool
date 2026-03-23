@@ -134,3 +134,75 @@ func TestFutureGetCalledMultipleTimes(t *testing.T) {
 
 	p.Wait()
 }
+
+func TestGoTimeoutSuccess(t *testing.T) {
+	p := New(2)
+
+	f, err := GoTimeout(p, func() (int, error) {
+		return 99, nil
+	}, time.Second)
+
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	val, ferr := f.Get()
+	if ferr != nil {
+		t.Fatalf("expected nil future error, got %v", ferr)
+	}
+	if val != 99 {
+		t.Fatalf("expected 99, got %d", val)
+	}
+
+	p.Wait()
+}
+
+func TestGoTimeoutExpires(t *testing.T) {
+	p := New(1)
+	started := make(chan struct{})
+	release := make(chan struct{})
+
+	// Fill the single worker slot.
+	p.Submit(func() {
+		close(started)
+		<-release
+	})
+	<-started
+
+	f, err := GoTimeout(p, func() (int, error) {
+		return 0, nil
+	}, 20*time.Millisecond)
+
+	if !errors.Is(err, ErrSubmitTimeout) {
+		t.Fatalf("expected ErrSubmitTimeout, got %v", err)
+	}
+	if f != nil {
+		t.Fatal("expected nil future on timeout")
+	}
+
+	close(release)
+	p.Wait()
+}
+
+func TestGoTimeoutWithError(t *testing.T) {
+	p := New(2)
+	expectedErr := errors.New("computation failed")
+
+	f, err := GoTimeout(p, func() (string, error) {
+		return "", expectedErr
+	}, time.Second)
+
+	if err != nil {
+		t.Fatalf("expected nil submit error, got %v", err)
+	}
+
+	val, ferr := f.Get()
+	if !errors.Is(ferr, expectedErr) {
+		t.Fatalf("expected %v, got %v", expectedErr, ferr)
+	}
+	if val != "" {
+		t.Fatalf("expected empty string, got %q", val)
+	}
+
+	p.Wait()
+}

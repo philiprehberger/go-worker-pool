@@ -1,5 +1,7 @@
 package workerpool
 
+import "time"
+
 // Future represents a value that will be available at some point in the future.
 // It is safe to call Get and Done from multiple goroutines concurrently.
 type Future[T any] struct {
@@ -38,4 +40,22 @@ func (f *Future[T]) Done() bool {
 	default:
 		return false
 	}
+}
+
+// GoTimeout submits a function that returns a value and an error to the pool,
+// waiting at most duration d for a worker slot. It returns a Future and nil
+// error on success, or nil and ErrSubmitTimeout if no slot becomes available
+// within the deadline.
+func GoTimeout[T any](p *Pool, fn func() (T, error), d time.Duration) (*Future[T], error) {
+	f := &Future[T]{
+		ch: make(chan struct{}),
+	}
+	err := p.SubmitTimeout(func() {
+		f.val, f.err = fn()
+		close(f.ch)
+	}, d)
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
 }
